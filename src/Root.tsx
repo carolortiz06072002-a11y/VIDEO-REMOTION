@@ -1,56 +1,60 @@
+import "./fonts";
 import { Composition, Folder } from "remotion";
-import { HelloWorld } from "./HelloWorld";
-import { Logo } from "./HelloWorld/Logo";
-import { Title } from "./HelloWorld/Title";
+import { MemoryTimeline } from "./components/MemoryTimeline";
+import { CTPD35Video, TOTAL_DURATION } from "./CTPD35Video";
+import { SCENES } from "./data/storyboard";
+import { LAYOUT_IDS, LAYOUTS, TEMPLATE_DURATION } from "./photo/layouts";
+import { PhotoCollage, photoTemplateSchema } from "./photo/PhotoCollage";
+import { Closing, CLOSING_DURATION } from "./scenes/Closing";
+import { Intro, INTRO_DURATION } from "./scenes/Intro";
+import { VIDEO } from "./theme";
 
-// Each <Composition> is an entry in the sidebar!
+/** Texto de muestra de cada plantilla: la primera escena del guion que la usa. */
+const sampleText = (id: string) => {
+  const scene = SCENES.find((s) => s.type === "photo" && s.layout === id);
+  return scene && scene.type === "photo" ? { kicker: scene.kicker, caption: scene.caption } : { kicker: "", caption: "" };
+};
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
-      <Folder name="Elements">
+      <Composition id="CTPD-35-Anos" component={CTPD35Video} durationInFrames={TOTAL_DURATION} {...VIDEO} />
+
+      <Folder name="Escenas">
+        <Composition id="Introduccion" component={Intro} durationInFrames={INTRO_DURATION} {...VIDEO} />
+        <Composition id="Cierre" component={Closing} durationInFrames={CLOSING_DURATION} {...VIDEO} />
         <Composition
-          id="Logo"
-          component={Logo}
-          durationInFrames={150}
-          fps={30}
-          width={1920}
-          height={1080}
+          id="Memoria-35-Anos"
+          component={MemoryTimeline}
+          durationInFrames={330}
+          {...VIDEO}
           defaultProps={{
-            logoColor1: "#91EAE4",
-            logoColor2: "#86A8E7",
-          }}
-        />
-        <Composition
-          id="Title"
-          component={Title}
-          durationInFrames={115}
-          fps={30}
-          width={1920}
-          height={1080}
-          defaultProps={{
-            titleText: "Welcome to Remotion",
-            titleColor: "#000000",
+            kicker: "Durante estos 35 años",
+            text: "Generaciones de consejeras y consejeros han asumido una responsabilidad profundamente ciudadana.",
           }}
         />
       </Folder>
-      <Composition
-        // You can take the "id" to render a video:
-        // bunx remotion render HelloWorld
-        id="HelloWorld"
-        component={HelloWorld}
-        durationInFrames={150}
-        fps={30}
-        width={1920}
-        height={1080}
-        // You can override these props for each render:
-        // https://www.remotion.dev/docs/parametrized-rendering
-        defaultProps={{
-          titleText: "Welcome to Remotion",
-          titleColor: "#000000",
-        }}
-      />
 
+      {/* Capas gráficas con ventanas transparentes, para exportar con canal alfa. */}
+      <Folder name="Plantillas-Fotos">
+        {LAYOUT_IDS.map((id) => (
+          <Composition
+            key={id}
+            id={LAYOUTS[id].compositionId}
+            component={PhotoCollage}
+            schema={photoTemplateSchema}
+            durationInFrames={TEMPLATE_DURATION}
+            {...VIDEO}
+            defaultProps={{
+              layout: id,
+              photos: [],
+              ...sampleText(id),
+              showPlaceholder: false,
+              background: "paper" as const,
+            }}
+          />
+        ))}
+      </Folder>
     </>
   );
 };

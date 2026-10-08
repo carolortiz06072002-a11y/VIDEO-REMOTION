@@ -1,12 +1,14 @@
 {
-  "name": "my-video",
+  "name": "ctpd-35-anos",
   "version": "1.0.0",
-  "description": "My Remotion video",
+  "description": "Video institucional 35 años del Consejo Territorial de Planeación Distrital (Remotion)",
   "repository": {},
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
     "@remotion/cli": "4.0.534",
+    "@remotion/fonts": "4.0.534",
+    "@remotion/transitions": "4.0.534",
     "@remotion/zod-types": "4.0.534",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -24,6 +26,11 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "render": "remotion render CTPD-35-Anos out/CTPD-35-anos.mp4",
+    "render:preview": "remotion render CTPD-35-Anos out/CTPD-35-anos-preview.mp4 --crf=22",
+    "plantillas:png": "node scripts/render-plantillas.mjs png",
+    "plantillas:mov": "node scripts/render-plantillas.mjs mov",
+    "plantillas:webm": "node scripts/render-plantillas.mjs webm",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   }
